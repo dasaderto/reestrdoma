@@ -18,8 +18,8 @@ class HouseView(APIView):
             'data': HouseResource(houses, many=is_all_houses).data
         })
 
-    def post(self, *args, **kwargs):
-        data = HouseResource(data=self.request.POST)
+    def post(self, request):
+        data = HouseResource(data=request.POST, context={'request': request})
 
         if not data.is_valid():
             return JsonResponse({
@@ -39,11 +39,16 @@ class HouseView(APIView):
         if 'houseId' not in self.request.GET:
             return JsonResponse({
                 'success': False,
-                'data': ['house id is undefined']
-            })
+                'data': 'house id is undefined'
+            }, status=404)
 
         house_id = self.request.GET.get('houseId')
-        house = House.objects.get(pk=house_id)
+        house = House.objects.filter(id=house_id).first()
+        if not house:
+            return JsonResponse({
+                'success': False,
+                'data': 'house with this id is undefined'
+            }, status=404)
 
         data = HouseResource(data=self.request.POST)
         if not data.is_valid():

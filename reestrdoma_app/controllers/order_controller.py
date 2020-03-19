@@ -22,7 +22,7 @@ class OrderView(APIView):
         })
 
     def post(self, *args, **kwargs):
-        data = OrderResource(data=self.request.POST)
+        data = OrderResource(data=self.request.POST, context={'request': self.request})
 
         if not data.is_valid():
             return JsonResponse({

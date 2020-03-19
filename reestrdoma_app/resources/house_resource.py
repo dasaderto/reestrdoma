@@ -4,6 +4,7 @@ from reestrdoma_app.models import House
 
 
 class HouseResource(serializers.ModelSerializer):
+    user = serializers.PrimaryKeyRelatedField(many=False, read_only=True)
 
     def update(self, instance, validated_data):
         instance.address = validated_data.get('address', instance.address)
@@ -17,6 +18,7 @@ class HouseResource(serializers.ModelSerializer):
         return instance
 
     def create(self, validated_data):
+        validated_data['user'] = self.context['request'].user.client.profile
         return House.objects.create(**validated_data)
 
     class Meta:

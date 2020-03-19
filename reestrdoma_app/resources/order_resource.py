@@ -4,8 +4,10 @@ from reestrdoma_app.models import Order
 
 
 class OrderResource(serializers.ModelSerializer):
+    user = serializers.PrimaryKeyRelatedField(many=False, read_only=True)
 
     def create(self, validated_data):
+        validated_data['user'] = self.context['request'].user.client.profile
         return Order.objects.create(**validated_data)
 
     def update(self, instance, validated_data):
