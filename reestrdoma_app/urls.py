@@ -15,8 +15,13 @@ Including another URLconf
 """
 from django.urls import re_path
 
-from reestrdoma_app.controllers import house_controller
+from reestrdoma_app.controllers import house_controller, order_controller, user_controller
 
 urlpatterns = [
     re_path(r'^houses/$', house_controller.HouseView.as_view()),
+    re_path(r'^orders/$', order_controller.OrderView.as_view()),
+    re_path(r'^profile/$', user_controller.ProfileView.as_view()),
+
+    re_path(r'^register/$', user_controller.RegisterView.as_view()),
+    re_path(r'^login/$', user_controller.LoginView.as_view()),
 ]

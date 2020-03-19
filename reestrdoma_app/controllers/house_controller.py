@@ -6,7 +6,7 @@ from reestrdoma_app.resources.house_resource import HouseResource
 
 
 class HouseView(APIView):
-    def get(self):
+    def get(self, *args, **kwargs):
         is_all_houses = 'houseId' not in self.request.GET
         if is_all_houses:
             houses = House.objects.all()
@@ -18,8 +18,8 @@ class HouseView(APIView):
             'data': HouseResource(houses, many=is_all_houses).data
         })
 
-    def post(self):
-        data = HouseResource(data=self.request.GET)
+    def post(self, *args, **kwargs):
+        data = HouseResource(data=self.request.POST)
 
         if not data.is_valid():
             return JsonResponse({
@@ -34,7 +34,7 @@ class HouseView(APIView):
             'data': HouseResource(new_house).data
         })
 
-    def put(self):
+    def put(self, *args, **kwargs):
 
         if 'houseId' not in self.request.GET:
             return JsonResponse({
@@ -45,14 +45,14 @@ class HouseView(APIView):
         house_id = self.request.GET.get('houseId')
         house = House.objects.get(pk=house_id)
 
-        data = HouseResource(data=self.request.GET)
+        data = HouseResource(data=self.request.POST)
         if not data.is_valid():
             return JsonResponse({
                 'success': False,
                 'data': data.errors
             }, status=400)
 
-        updated_house = data.update(instance=house,validated_data=data.validated_data)
+        updated_house = data.update(instance=house, validated_data=data.validated_data)
 
         return JsonResponse({
             'success': True,

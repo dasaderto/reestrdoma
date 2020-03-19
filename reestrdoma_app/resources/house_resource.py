@@ -6,7 +6,6 @@ from reestrdoma_app.models import House
 class HouseResource(serializers.ModelSerializer):
 
     def update(self, instance, validated_data):
-        instance.cadastral_number = validated_data.get('cadastral_number', instance.cadastral_number)
         instance.address = validated_data.get('address', instance.address)
         instance.flat_count = validated_data.get('flat_count', instance.flat_count)
         instance.actual_date = validated_data.get('actual_date', instance.actual_date)

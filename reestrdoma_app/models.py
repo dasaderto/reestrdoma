@@ -4,6 +4,7 @@ from django.db import models
 # Create your models here.
 from django.db.models.signals import post_save
 from django.dispatch import receiver
+from rest_framework_simplejwt.tokens import RefreshToken
 
 
 class TimeStampedModel(models.Model):
@@ -14,6 +15,15 @@ class TimeStampedModel(models.Model):
         abstract = True
 
 
+def get_tokens_for_user(user: User):
+    refresh = RefreshToken.for_user(user)
+
+    return {
+        'refresh': str(refresh),
+        'access': str(refresh.access_token),
+    }
+
+
 class Client(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     phone = models.CharField(max_length=30, blank=True)
@@ -21,13 +31,13 @@ class Client(models.Model):
 
 
 class Profile(models.Model):
-    LEGAL = 'legal_face'
-    PHYSICAL = 'physical_face'
+    LEGAL = 'LEGAL_FACE'
+    PHYSICAL = 'PHYSICAL_FACE'
     STATUSES = (
         (LEGAL, 'Юр. лицо'),
         (PHYSICAL, 'Физ. лицо'),
     )
-    user = models.OneToOneField(Client, on_delete=models.CASCADE)
+    client = models.OneToOneField(Client, on_delete=models.CASCADE)
     status = models.CharField(max_length=50, choices=STATUSES, blank=True)
 
 
@@ -41,7 +51,7 @@ def create_user_client(sender, instance, created, **kwargs):
 @receiver(post_save, sender=Client)
 def create_user_profile(sender, instance, created, **kwargs):
     if created:
-        profile = Profile(user=instance)
+        profile = Profile(client=instance)
         profile.save()
 
 
