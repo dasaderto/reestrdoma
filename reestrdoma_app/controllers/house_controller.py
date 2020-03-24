@@ -3,12 +3,14 @@ from rest_framework.decorators import permission_classes
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView
 
+from reestrdoma_app.decorators.api_token import check_api_token
 from reestrdoma_app.models import House
 from reestrdoma_app.resources.house_resource import HouseResource
 
 
 @permission_classes([IsAuthenticated])
 class HouseView(APIView):
+
     def get(self, *args, **kwargs):
         is_all_houses = 'houseId' not in self.request.GET
         if is_all_houses:
@@ -39,6 +41,7 @@ class HouseView(APIView):
             'data': HouseResource(new_house).data
         })
 
+    @check_api_token
     def put(self, *args, **kwargs):
 
         if 'houseId' not in self.request.GET:

@@ -24,4 +24,5 @@ urlpatterns = [
 
     re_path(r'^register/$', user_controller.RegisterView.as_view()),
     re_path(r'^login/$', user_controller.LoginView.as_view()),
+
 ]
