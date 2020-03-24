@@ -4,25 +4,24 @@ from reestrdoma_app.models import Profile
 
 
 class ProfileResource(serializers.ModelSerializer):
-    first_name = serializers.CharField(source='client.user.first_name')
-    last_name = serializers.CharField(source='client.user.last_name')
-    email = serializers.CharField(source='client.user.email')
-    phone = serializers.CharField(source='client.phone')
+    first_name = serializers.CharField(source='user.first_name')
+    last_name = serializers.CharField(source='user.last_name')
+    email = serializers.CharField(source='user.email')
+    phone = serializers.CharField(source='user.phone')
 
     def update(self, instance, validated_data):
-        instance.client.user.first_name = validated_data.get('client').get('user').get('first_name',
-                                                                                       instance.client.user.first_name)
-        instance.client.user.last_name = validated_data.get('client').get('user').get('last_name',
-                                                                                      instance.client.user.last_name)
-        instance.client.user.email = validated_data.get('client').get('user').get('email', instance.client.user.email)
-        instance.client.phone = validated_data.get('client').get('phone', instance.client.phone)
+        instance.user.first_name = validated_data.get('user').get('first_name',
+                                                                  instance.user.first_name)
+        instance.user.last_name = validated_data.get('user').get('last_name',
+                                                                 instance.user.last_name)
+        instance.user.email = validated_data.get('user').get('email', instance.user.email)
+        instance.user.phone = validated_data.get('user').get('phone', instance.user.phone)
         instance.status = validated_data.get('status', instance.status)
-        instance.client.save()
-        instance.client.user.save()
         instance.save()
+        instance.user.save()
         return instance
 
     class Meta:
         model = Profile
         fields = '__all__'
-        read_only_fields = ['client']
+        read_only_fields = ['user']

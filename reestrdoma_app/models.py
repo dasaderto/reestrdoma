@@ -1,4 +1,4 @@
-from django.contrib.auth.models import User
+from django.contrib.auth.models import AbstractUser
 from django.db import models
 
 # Create your models here.
@@ -15,6 +15,11 @@ class TimeStampedModel(models.Model):
         abstract = True
 
 
+class User(AbstractUser):
+    phone = models.CharField(max_length=30, blank=True)
+    bitrix_id = models.IntegerField(null=True)
+
+
 def get_tokens_for_user(user: User):
     refresh = RefreshToken.for_user(user)
 
@@ -24,12 +29,6 @@ def get_tokens_for_user(user: User):
     }
 
 
-class Client(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
-    phone = models.CharField(max_length=30, blank=True)
-    bitrix_id = models.IntegerField(null=True)
-
-
 class Profile(models.Model):
     LEGAL = 'LEGAL_FACE'
     PHYSICAL = 'PHYSICAL_FACE'
@@ -37,36 +36,24 @@ class Profile(models.Model):
         (LEGAL, 'Юр. лицо'),
         (PHYSICAL, 'Физ. лицо'),
     )
-    client = models.OneToOneField(Client, on_delete=models.CASCADE)
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
     status = models.CharField(max_length=50, choices=STATUSES, blank=True)
 
 
 @receiver(post_save, sender=User)
-def create_user_client(sender, instance, created, **kwargs):
-    if created:
-        client = Client(user=instance)
-        client.save()
-
-
-@receiver(post_save, sender=Client)
 def create_user_profile(sender, instance, created, **kwargs):
     if created:
-        profile = Profile(client=instance)
+        profile = Profile(user=instance)
         profile.save()
 
 
 @receiver(post_save, sender=User)
-def save_user_client(sender, instance, **kwargs):
-    instance.client.save()
-
-
-@receiver(post_save, sender=Client)
-def save_client_profile(sender, instance, **kwargs):
+def save_user_profile(sender, instance, **kwargs):
     instance.profile.save()
 
 
 class House(TimeStampedModel):
-    user = models.ForeignKey(Profile, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
     address = models.CharField(max_length=255)
     flat_count = models.IntegerField(default=0)
     actual_date = models.DateTimeField(null=True)
@@ -77,7 +64,7 @@ class House(TimeStampedModel):
 
 
 class Order(TimeStampedModel):
-    house = models.ForeignKey(House, on_delete=models.CASCADE)
+    house = models.ForeignKey(User, on_delete=models.CASCADE)
     user = models.ForeignKey(Profile, on_delete=models.CASCADE)
     cad_num = models.CharField(max_length=255)
     address = models.CharField(null=True, max_length=255)

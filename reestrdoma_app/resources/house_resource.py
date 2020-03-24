@@ -18,7 +18,7 @@ class HouseResource(serializers.ModelSerializer):
         return instance
 
     def create(self, validated_data):
-        validated_data['user'] = self.context['request'].user.client.profile
+        validated_data['user'] = self.context['request'].user
         return House.objects.create(**validated_data)
 
     class Meta:

@@ -1,9 +1,8 @@
-from django.contrib.auth.models import User
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
 from rest_framework.validators import UniqueValidator
 
-from reestrdoma_app.models import Profile
+from reestrdoma_app.models import Profile, User
 
 
 class RegisterResource(serializers.Serializer):

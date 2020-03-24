@@ -1,5 +1,4 @@
-from django.contrib.auth.models import User
-
+from reestrdoma_app.models import User
 from reestrdoma_app.resources.user_resource import RegisterResource
 
 
@@ -9,10 +8,10 @@ class RegisterService:
 
         user = data.create(validated_data=valided_data)
 
-        user.client.phone = valided_data.get('phone')
-        user.client.save()
+        user.phone = valided_data.get('phone')
+        user.save()
 
-        user.client.profile.status = valided_data.get('status')
-        user.client.profile.save()
+        user.profile.status = valided_data.get('status')
+        user.profile.save()
 
         return user

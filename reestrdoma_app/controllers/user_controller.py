@@ -18,7 +18,7 @@ class ProfileView(APIView):
                 'data': data.errors
             }, status=400)
 
-        profile = Profile.objects.get(client__user=self.request.user.id or 1)
+        profile = Profile.objects.get(user=self.request.user.id)
         updated = data.update(instance=profile, validated_data=data.validated_data)
 
         return JsonResponse({
@@ -48,20 +48,20 @@ class RegisterView(APIView):
         return JsonResponse({
             'success': True,
             'data': {
-                'user': ProfileResource(user.client.profile).data,
+                'user': ProfileResource(user.profile).data,
                 'token': token
             }
         })
 
 
 class LoginView(APIView):
-    def post(self, *args, **kwargs):
+    def post(self, request, *args, **kwargs):
         data = LoginResource(data=self.request.POST)
 
         if not data.is_valid():
             return JsonResponse({
                 'success': False,
-                'data': data.errors
+                'data':  data.errors
             }, status=400)
 
         user = authenticate(username=data.validated_data.get('username'), password=data.validated_data.get('password'))
@@ -76,7 +76,7 @@ class LoginView(APIView):
         return JsonResponse({
             'success': True,
             'data': {
-                'user': ProfileResource(user.client.profile).data,
+                'user': ProfileResource(user.profile).data,
                 'token': token
             }
         })

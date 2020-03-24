@@ -1,17 +1,20 @@
 from django.http import JsonResponse
+from rest_framework.decorators import permission_classes
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView
 
 from reestrdoma_app.models import House
 from reestrdoma_app.resources.house_resource import HouseResource
 
 
+@permission_classes([IsAuthenticated])
 class HouseView(APIView):
     def get(self, *args, **kwargs):
         is_all_houses = 'houseId' not in self.request.GET
         if is_all_houses:
-            houses = House.objects.all()
+            houses = House.objects.filter(user=self.request.user.id)
         else:
-            houses = House.objects.get(pk=self.request.GET.get('houseId'))
+            houses = House.objects.filter(pk=self.request.GET.get('houseId'), user=self.request.user)
 
         return JsonResponse({
             'success': True,
@@ -19,7 +22,7 @@ class HouseView(APIView):
         })
 
     def post(self, request):
-        data = HouseResource(data=request.POST, context={'request': request})
+        data = HouseResource(data=self.request.POST, context={'request': request})
 
         if not data.is_valid():
             return JsonResponse({
@@ -27,7 +30,9 @@ class HouseView(APIView):
                 'data': data.errors
             }, status=400)
 
-        new_house = data.create(validated_data=data.validated_data)
+        new_house = data.create(validated_data={
+            'address': data.validated_data.get('address')
+        })
 
         return JsonResponse({
             'success': True,
