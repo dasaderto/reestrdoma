@@ -80,3 +80,11 @@ class LoginView(APIView):
                 'token': token
             }
         })
+
+
+class UserView(APIView):
+    def get(self,*args,**kwargs):
+        return JsonResponse({
+            'success': True,
+            'data': ProfileResource(self.request.user.profile).data
+        })
