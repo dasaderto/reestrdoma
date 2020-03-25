@@ -1,3 +1,11 @@
+from reestrdoma_app.models import User
+
 
 class BitrixService:
-    pass
+
+    def create_contact(self, user: User):
+        data = {
+            'fields': {
+                
+            }
+        }
