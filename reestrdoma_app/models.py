@@ -6,27 +6,7 @@ from django.db.models.signals import post_save
 from django.dispatch import receiver
 from rest_framework_simplejwt.tokens import RefreshToken
 
-
-class TimeStampedModel(models.Model):
-    created_at = models.DateTimeField(auto_now_add=True, db_index=True)
-    updated_at = models.DateTimeField(auto_now=True, db_index=True)
-
-    class Meta(object):
-        abstract = True
-
-
-class User(AbstractUser):
-    phone = models.CharField(max_length=30, blank=True)
-    bitrix_id = models.IntegerField(null=True)
-
-
-def get_tokens_for_user(user: User):
-    refresh = RefreshToken.for_user(user)
-
-    return {
-        'refresh': str(refresh),
-        'access': str(refresh.access_token),
-    }
+from core.models import User, TimeStampedModel
 
 
 class Profile(models.Model):
