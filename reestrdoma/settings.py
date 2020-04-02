@@ -26,7 +26,7 @@ SECRET_KEY = 'a)@$oo)0eq8)62=96v7w9-u5is_c_vsx3r%@lh!#^4(17)=r@&'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['127.0.0.1', '5.196.114.191']
+ALLOWED_HOSTS = ['*']
 
 AUTH_USER_MODEL = 'reestrdoma_app.User'
 # Application definition

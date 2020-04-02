@@ -10,7 +10,7 @@ class RegisterResource(serializers.Serializer):
     first_name = serializers.CharField(max_length=255)
     last_name = serializers.CharField(max_length=255)
     email = serializers.EmailField(max_length=255)
-    password = serializers.CharField(max_length=255)
+    password = serializers.CharField(max_length=255, min_length=8)
     password_confirmation = serializers.CharField(max_length=255)
     phone = serializers.CharField(max_length=30)
     status = serializers.ChoiceField(choices=Profile.STATUSES)
